@@ -1,0 +1,21 @@
+#sortable-table td {
+  background: white;
+}
+#sortable-table .column-order {
+  padding: 3px 10px;
+  width: 50px;
+}
+#sortable-table .column-order img {
+  cursor: move;
+}
+#sortable-table td.column-order {
+  vertical-align: middle;
+  text-align: center;
+}
+#sortable-table .column-thumbnail {
+  width: 160px;
+}
+#sortable-table .column-thumbnail img {
+  width: 100%;
+  height: auto;
+}
