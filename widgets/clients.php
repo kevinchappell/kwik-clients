@@ -44,6 +44,17 @@ class Clients_Table extends WP_Widget {
     $this->WP_Widget( 'cpt-clients-widget', esc_html__('Kwik Clients', 'kwik'), $widget_ops, $control_ops );
   }
 
+  function addStyle($cpr) {
+    $width = $cpr !== 0 ? 100/$cpr : 100;
+    $width = $width-2+(2/$cpr); // factor in the margin-right
+    $add_style = '<style type="text/css">';
+    $add_style .= '.cpt_clients_widget .client{
+      width:'.round($width, 2).'%;
+    }';
+    $add_style .= '</style>';
+    echo $add_style;
+  }
+
   /**
    * How to display the widget on the screen.
    */
@@ -53,11 +64,18 @@ class Clients_Table extends WP_Widget {
 
     /* Our variables from the widget settings. */
     $title = apply_filters('widget_title', $instance['title'] );
-    $levels = $instance['levels'];
     $orderby = $instance['orderby'];
-    $show_thumbs = isset( $instance['show_thumbs'] ) ? $instance['show_thumbs'] : false;
-    $thumb_size = $instance['thumb_size'];
+    $order = $instance['order'];
+    $show_thumbs = isset( $instance['show_thumbs'] ) ? 1 : 0;
 
+    $args = array(
+      'levels' => $instance['levels'],
+      'orderby' => $instance['orderby'],
+      'order' => $instance['order'],
+      'show_thumbs' => $instance['show_thumbs']
+    );
+
+    self::addStyle($instance['clients_per_row']);
 
     /* Before widget (defined by themes). */
     echo $before_widget;
@@ -65,8 +83,9 @@ class Clients_Table extends WP_Widget {
     /* Display the widget title if one was input (before and after defined by themes). */
     if ( $title ) echo $before_title . $title . $views_posts_link . $after_title;
 
-    foreach($levels as $level){
-      client_logos($args);
+    foreach($instance['levels'] as $level){
+      $args['level'] = $level;
+      KwikClients::client_logos($args);
     }
 
     /* After widget (defined by themes). */
@@ -82,50 +101,36 @@ class Clients_Table extends WP_Widget {
     /* Strip tags for title and name to remove HTML (important for text inputs). */
     $instance['title'] = strip_tags( $new_instance['title'] );
     $instance['levels'] = $new_instance['levels'];
-    $instance['orderby'] = strip_tags( $new_instance['post_offset'] );
-    $instance['show_thumbs'] = strip_tags( $new_instance['excerpt_length'] );
-
+    $instance['orderby'] = strip_tags( $new_instance['orderby'] );
+    $instance['order'] = strip_tags( $new_instance['order'] );
+    $instance['show_thumbs'] = $new_instance['show_thumbs'];
+    $instance['clients_per_row'] = strip_tags( $new_instance['clients_per_row'] );
     return $instance;
   }
 
 
   /**
-   * Displays the widget settings controls on the widget panel.
-   * Make use of the get_field_id() and get_field_name() function
-   * when creating your form elements. This handles the confusing stuff.
+   * Widget settings form
    */
   function form( $instance ) {
     $inputs = new KwikInputs();
 
-    /* Set up some default widget settings. */
+
+    // Set up some default widget settings.
     $defaults = array( 'title' => esc_html__('Member Companies', 'kwik'),
-    'levels' => array(),
-    'orderby' => 'menu_order',
-    'order' => 'ASC',
-    'show_thumbs' => 0
+      'levels' => array(),
+      'orderby' => 'menu_order',
+      'order' => 'ASC',
+      'show_thumbs' => 0,
+      'clients_per_row' => 6
     );
     $instance = wp_parse_args( (array) $instance, $defaults );
-    ?>
 
-    <script type="text/javascript">
-    jQuery(document).ready(function ($) {
-      $('#<?php echo $this->get_field_id( "show_date" ); ?>').click( function() {
-        var date_style = $("#<?php echo $this->get_field_id( 'show_date_style' ); ?>-label"), show_date_cb = $(this);
-        date_style.toggle(250, function(){
-          if(show_date_cb.attr('checked') === undefined) $('input[type="checkbox"]', $(this)).removeAttr('checked');
-        });
-      });
-    });
-    </script>
+    // Widget Title: Text Input
+    echo $inputs->text($this->get_field_name( 'title' ), $instance['title'], __('Title: ', 'kwik'));
 
-    <!-- Widget Title: Text Input -->
-    <p>
-      <label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php esc_html_e('Title:', 'kwik'); ?></label>
-      <input id="<?php echo $this->get_field_id( 'title' ); ?>" type="text" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo $instance['title']; ?>" class="widefat" />
-    </p>
 
-    <!-- Client Levels -->
-    <?php
+    // Client Levels
     $terms = get_terms("client_levels", 'orderby=id&hide_empty=0'  );
     echo $inputs->markup('h4', __('Levels: ', 'kwik'));
 
@@ -133,34 +138,16 @@ class Clients_Table extends WP_Widget {
       $cbAttrs = array(
         'id'=> $this->get_field_name( 'levels' ).'-'.$term->slug
         );
-      $cbAttrs['checked'] = $instance['levels'][$term->slug] ? TRUE : FALSE ;
+      $cbAttrs['checked'] = $instance['levels'][$term->slug] ? TRUE : FALSE;
       echo $inputs->cb($this->get_field_name( 'levels' ).'['.$term->slug.']', $term->slug, $term->name.': ', $cbAttrs);
     }
-    ?>
 
-    <!-- Show Thumbnails -->
-    <p>
-      <label for="<?php echo $this->get_field_id( 'show_thumbs' ); ?>">
-          <input class="checkbox" type="checkbox" <?php checked( $instance['show_thumbs'], true ); ?> id="<?php echo $this->get_field_id( 'show_thumbs' ); ?>" name="<?php echo $this->get_field_name( 'show_thumbs' ); ?>" value="1" <?php checked('1', $instance['show_thumbs']); ?> />
-          <?php esc_html_e('Show thumbnails', 'kwik'); ?>
-      </label>
-    </p>
+    echo $inputs->select($this->get_field_name( 'orderby' ), $instance['orderby'], __('Order By: ', 'kwik'), NULL, $inputs->orderBy());
+    echo $inputs->select($this->get_field_name( 'order' ), $instance['order'], __('Order: ', 'kwik'), NULL, $inputs->order());
 
-<?php
-if($instance['show_thumbs']) : ?>
-    <!-- Thumb Dimension -->
-    <p>
-      <label for="<?php echo $this->get_field_id( 'thumb_size' ); ?>"><?php esc_html_e('Thumbnail Dimensions:', 'kwik'); ?></label><br />
-      <input type="text" name="<?php echo $this->get_field_name( 'thumb_size' ); ?>[]" value="<?php echo $instance['thumb_size'][0]; ?>" size="5" maxlength="4" />
-      <span> &#10005; </span>
-      <input type="text" name="<?php echo $this->get_field_name( 'thumb_size' ); ?>[]" value="<?php echo $instance['thumb_size'][1]; ?>" size="5" maxlength="4" />
-      <br />
-      <span style="width:58px;display:inline-block;"><?php esc_html_e('Width', 'kwik'); ?></span>&#10005;<span style="margin-left:9px;width:150px;"><?php esc_html_e('Height in pixels', 'kwik'); ?></span>
-    </p>
+    echo $inputs->spinner($this->get_field_name( 'clients_per_row' ), $instance['clients_per_row'], __('Clients per Row: ', 'kwik'), array('min' => '1', 'max'=>'6'));
+    echo $inputs->cb($this->get_field_name( 'show_thumbs' ), TRUE, __('Show thumbnails: ', 'kwik'), array('checked'=> $instance['show_thumbs'] ? TRUE : FALSE));
 
-<?php endif; ?>
-
-<?php
   }
 }
 

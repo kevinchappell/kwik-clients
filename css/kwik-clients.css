@@ -1,0 +1,54 @@
+
+
+/*
+=========================
+  WIDGETS
+=========================
+*/
+
+.cpt_clients_widget {
+  width:100%;
+}
+.cpt_clients_widget .client {
+  float: left;
+  margin-right: 2%;
+  text-align: center;
+  height: 76px;
+  vertical-align: middle;
+}
+.cpt_clients_widget .client span {
+  display: inline-block;
+  vertical-align: middle;
+}
+.cpt_clients_widget .client.client-89 img {
+  margin-top: 12px;
+}
+.cpt_clients_widget .client.client-234 img {
+  width:100px;
+}
+.cpt_clients_widget .client:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+}
+.cpt_clients_widget .client.client-101 img {
+  width: 110px;
+}
+.cpt_clients_widget .client:last-child, .cpt_clients_widget .client:nth-child(6n+6) {
+  margin-right: 0;
+}
+.cpt_clients_widget .attachment-client_logo {
+  height: auto;
+  display: inline-block;
+  vertical-align: middle;
+}
+.cpt_clients_widget a {
+  display: inline-block;
+}
+.cpt_clients_widget .member-level {
+  margin-bottom:20px;
+}
+.cpt_clients_widget .member-level:last-child{
+  margin-bottom:0;
+}
