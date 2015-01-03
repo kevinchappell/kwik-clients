@@ -36,7 +36,7 @@ class K_CLIENTS_HELPERS extends KwikClients{
       switch( $untranslated_text ) {
 
         case 'Insert into post':
-          $translated_text = __( 'Set Client Logo','kwik' );
+          $translated_text = __( 'Add to Client description','kwik' );
         break;
 
         case 'Set featured image':

@@ -254,7 +254,7 @@ public function membership_table( $atts ) {
         $client_name = get_the_title($client_id);
         $logo_or_name = (has_post_thumbnail() && $args['show_thumbs']) ? get_the_post_thumbnail($client_id, 'client_logo') : $client_name;
         $client = $inputs->markup('a', $logo_or_name, array('href' => get_the_permalink($client_id), 'title' => $client_name));
-        $cl .= $inputs->markup('div', $client, array("class"=>"client client-".$client_id));
+        $cl .= $inputs->markup('div', $client, array("class"=>"client client-".$client_id." nth-client-".$i));
         $i++;
       endwhile;
     endif; wp_reset_postdata();
