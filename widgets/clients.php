@@ -82,9 +82,13 @@ class Clients_Table extends WP_Widget {
     /* Display the widget title if one was input (before and after defined by themes). */
     if ( $title ) echo $before_title . $title . $views_posts_link . $after_title;
 
-    foreach($instance['levels'] as $level){
-      $args['level'] = $level;
-      KwikClients::client_logos($args);
+    if($instance['levels']){
+      foreach($instance['levels'] as $level){
+        $args['level'] = $level;
+        KwikClients::client_logos($args);
+      }
+    } else {
+        KwikClients::client_logos($args);
     }
 
     echo $after_widget;

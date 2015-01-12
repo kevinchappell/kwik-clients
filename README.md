@@ -1,4 +1,6 @@
 # Kwik Clients #
+Easily add member companies to your WordPress website.
 
-## Work in Progress ##
-do not use yet
+Features: 
+- widget for displaying logos
+- drag and drop ordering  

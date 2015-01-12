@@ -59,7 +59,7 @@ class KwikClients {
         'menu_icon' => 'dashicons-awards',
         'menu_position' => 5,
 
-      'supports' => array('title','editor','thumbnail', 'author', 'comments' ),
+      'supports' => array('title', 'editor', 'thumbnail', 'author' ),
       'public' => true,
       'exclude_from_search' => false,
       'has_archive' => true,
@@ -94,7 +94,7 @@ class KwikClients {
       'show_ui' => true,
       'query_var' => true,
       'show_admin_column' => true,
-      'rewrite' => array('slug' => 'submission-type', 'hierarchical' => true)
+      'rewrite' => array('slug' => 'member-industry', 'hierarchical' => true)
     ));
 
     $client_levels_labels = array(
@@ -114,7 +114,7 @@ class KwikClients {
       'show_ui' => true,
       'query_var' => true,
       'show_admin_column' => true,
-      'rewrite' => array('slug' => 'submission-type', 'hierarchical' => true)
+      'rewrite' => array('slug' => 'member-level', 'hierarchical' => true)
     ));
 
 
@@ -229,17 +229,18 @@ public function membership_table( $atts ) {
 
   public function client_logos($args){
     $inputs = new KwikInputs();
-
-    $term = get_term_by( 'slug', $args['level'], 'client_levels');
-
-    $cl = $inputs->markup('h3', $term->name.' Members');
     $query_args = array(
       'post_status' => 'publish',
       'post_type' => 'clients',
-      'client_levels' => $args['level'],
       'orderby' => $args['orderby'],
       'order' => $args['order']
     );
+
+    if($args['level']){
+      $query_args['client_levels'] = $args['level'];
+      $term = get_term_by( 'slug', $args['level'], 'client_levels');
+      $cl = $inputs->markup('h3', $term->name.' Members');
+    }
 
     $client_query = new WP_Query($query_args);
 
