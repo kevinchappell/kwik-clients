@@ -28,7 +28,7 @@ class KwikClients {
   }
 
   public function admin() {
-    if ( !$this->admin ) {
+    if ( !isset($this->admin) ) {
       require_once __DIR__ . '/class.kwik-clients-admin.php';
       $this->admin = new KwikClients_Admin( $this );
     }
@@ -236,7 +236,7 @@ public function membership_table( $atts ) {
       'order' => $args['order']
     );
 
-    if($args['level']){
+    if(isset($args['level'])){
       $query_args['client_levels'] = $args['level'];
       $term = get_term_by( 'slug', $args['level'], 'client_levels');
       $cl = $inputs->markup('h3', $term->name.' Members');
@@ -247,6 +247,7 @@ public function membership_table( $atts ) {
     $i = 1;
     $total = $client_query->post_count;
     if ($client_query->have_posts()):
+      $cl = '';
       while ($client_query->have_posts()) : $client_query->the_post();
         global $more;
         $more = 0;
@@ -260,7 +261,9 @@ public function membership_table( $atts ) {
       endwhile;
     endif; wp_reset_postdata();
 
-    $cl = $inputs->markup('div', $cl, array('class'=> array('member-level', $term->slug.'-members', 'clear')));
+    $term_class = isset($term) ? $term->slug.'-members' : NULL;
+
+    $cl = $inputs->markup('div', $cl, array('class'=> array('member-level', $term_class, 'clear')));
 
     echo $cl;
   }
@@ -268,7 +271,7 @@ public function membership_table( $atts ) {
 
   public function load_widgets(){
     foreach (glob(K_CLIENTS_PATH . "/widgets/*.php") as $inc_filename) {
-      include $inc_filename;
+      require_once $inc_filename;
     }
   }
 

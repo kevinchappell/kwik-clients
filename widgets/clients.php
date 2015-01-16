@@ -58,6 +58,7 @@ class Clients_Table extends WP_Widget {
    * Render the widget for users
    */
   function widget( $args, $instance ) {
+    $KwikClients = new KwikClients;
     extract( $args );
 
     // variables from widget settings.
@@ -80,15 +81,17 @@ class Clients_Table extends WP_Widget {
     echo $before_widget;
 
     /* Display the widget title if one was input (before and after defined by themes). */
-    if ( $title ) echo $before_title . $title . $views_posts_link . $after_title;
+    if ( $title ) {
+      echo $before_title . $title . $after_title;
+    }
 
     if($instance['levels']){
       foreach($instance['levels'] as $level){
         $args['level'] = $level;
-        KwikClients::client_logos($args);
+        $KwikClients->client_logos($args);
       }
     } else {
-        KwikClients::client_logos($args);
+        $KwikClients->client_logos($args);
     }
 
     echo $after_widget;

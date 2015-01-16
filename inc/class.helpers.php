@@ -29,7 +29,7 @@ class K_CLIENTS_HELPERS extends KwikClients{
     return $columns;
   }
 
-  public function k_client_logo_text_filter( $translated_text, $untranslated_text, $domain ) {
+  public static function k_client_logo_text_filter( $translated_text, $untranslated_text, $domain ) {
     global $post, $typenow, $current_screen;
 
     if( is_admin() && 'clients' === $typenow )  {
