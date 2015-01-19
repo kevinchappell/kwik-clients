@@ -44,7 +44,7 @@ class Clients_Table extends WP_Widget {
     $this->WP_Widget( 'cpt-clients-widget', esc_html__('Kwik Clients Logos', 'kwik'), $widget_ops, $control_ops );
   }
 
-  function addStyle($cpr) {
+  function add_style($cpr) {
     $width = $cpr !== 0 ? 100/$cpr : 100;
     $width = $width-2+(2/$cpr); // factor in the margin-right
     $add_style = '<style type="text/css">';
@@ -76,7 +76,7 @@ class Clients_Table extends WP_Widget {
     );
 
     // custom styling based on widget settings
-    self::addStyle($clients_per_row);
+    self::add_style($clients_per_row);
 
     echo $before_widget;
 
@@ -145,7 +145,7 @@ class Clients_Table extends WP_Widget {
       $output .= $inputs->cb($this->get_field_name( 'levels' ).'['.$term->slug.']', $term->slug, $term->name.': ', $cbAttrs);
     }
 
-    $output .= $inputs->select($this->get_field_name( 'orderby' ), $instance['orderby'], __('Order By: ', 'kwik'), NULL, $inputs->orderBy());
+    $output .= $inputs->select($this->get_field_name( 'orderby' ), $instance['orderby'], __('Order By: ', 'kwik'), NULL, $inputs->order_by());
     $output .= $inputs->select($this->get_field_name( 'order' ), $instance['order'], __('Order: ', 'kwik'), NULL, $inputs->order());
     $output .= $inputs->spinner($this->get_field_name( 'clients_per_row' ), $instance['clients_per_row'], __('Clients per Row: ', 'kwik'), array('min' => '1', 'max'=>'6'));
     $output .= $inputs->cb($this->get_field_name( 'show_thumbs' ), TRUE, __('Show thumbnails: ', 'kwik'), array('checked'=> $instance['show_thumbs'] ? TRUE : FALSE));
