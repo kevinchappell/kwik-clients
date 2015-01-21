@@ -46,28 +46,33 @@ class K_CLIENTS_HELPERS extends KwikClients
     public static function k_client_logo_text_filter($translated_text, $untranslated_text, $domain)
     {
         global $post, $typenow, $current_screen;
+        $settings = get_option(K_CLIENTS_SETTINGS);
+
+        $plugin = array(
+            'name' => isset($settings['name']) ? $settings['name'] : 'Client'
+        );
 
         if (is_admin() && 'clients' === $typenow) {
             switch ($untranslated_text) {
 
                 case 'Insert into post':
-                    $translated_text = __('Add to Client description', 'kwik');
+                    $translated_text = __("Add to {$plugin['name']} description", 'kwik');
                     break;
 
                 case 'Set featured image':
-                    $translated_text = __('Set Client logo', 'kwik');
+                    $translated_text = __("Set {$plugin['name']} image", 'kwik');
                     break;
 
                 case 'Set Featured Image':
-                    $translated_text = __('Set Client Logo', 'kwik');
+                    $translated_text = __("Set {$plugin['name']} Image", 'kwik');
                     break;
 
                 case 'Featured Image':
-                    $translated_text = __('Client Logo', 'kwik');
+                    $translated_text = __("{$plugin['name']} Image", 'kwik');
                     break;
 
                 case 'Enter title here':
-                    $translated_text = __('Enter Client Name', 'kwik');
+                    $translated_text = __("Enter {$plugin['name']} Name", 'kwik');
                     break;
             }
         }

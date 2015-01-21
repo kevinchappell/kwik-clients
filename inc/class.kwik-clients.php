@@ -94,80 +94,62 @@ class KwikClients
 
     public function create_clients_taxonomies()
     {
-
-        $client_sector_labels = array(
-            'name' => _x('Industry', 'taxonomy general name'),
-            'singular_name' => _x('Industry', 'taxonomy singular name'),
-            'search_items' => __('Search Industries'),
-            'all_items' => __('All Industries'),
-            'edit_item' => __('Edit Industry'),
-            'update_item' => __('Update Industry'),
-            'add_new_item' => __('Add New Industry'),
-            'new_item_name' => __('New Industry'),
-        );
-
         register_taxonomy('client_sector', array('clients'), array(
             'hierarchical' => true,
-            'labels' => $client_sector_labels,
+            'labels' => self::make_labels('Industry', 'Industries'),
             'show_ui' => true,
             'query_var' => true,
             'show_admin_column' => true,
             'rewrite' => array('slug' => 'member-industry', 'hierarchical' => true),
         ));
 
-        $client_levels_labels = array(
-            'name' => _x('Level', 'taxonomy general name'),
-            'singular_name' => _x('Level', 'taxonomy singular name'),
-            'search_items' => __('Search Levels'),
-            'all_items' => __('All Levels'),
-            'edit_item' => __('Edit Level'),
-            'update_item' => __('Update Level'),
-            'add_new_item' => __('Add New Level'),
-            'new_item_name' => __('New Level'),
-        );
-
         register_taxonomy('client_levels', array('clients'), array(
             'hierarchical' => true,
-            'labels' => $client_levels_labels,
+            'labels' => self::make_labels('Level', 'Levels'),
             'show_ui' => true,
             'query_var' => true,
             'show_admin_column' => true,
             'rewrite' => array('slug' => 'member-level', 'hierarchical' => true),
         ));
+    }
 
+    private static function make_labels($single, $plural)
+    {
+        return array(
+            'name' => _x($plural, 'taxonomy general name'),
+            'singular_name' => _x($plural, 'taxonomy singular name'),
+            'search_items' => __('Search '.$plural),
+            'all_items' => __('All '.$plural),
+            'edit_item' => __('Edit '.$single),
+            'update_item' => __('Update '.$single),
+            'add_new_item' => __('Add New '.$single),
+            'new_item_name' => __('New '.$single),
+        );
     }
 
     public function member_table()
     {
-        ?>
-<div class="member_table">
-<?php $terms = get_terms("client_levels", 'orderby=id&hide_empty=0');
+?>
+        <div class="member_table">
+        <?php $terms = get_terms("client_levels", 'orderby=id&hide_empty=0');
         foreach ($terms as $term) {
             $clients = new WP_Query(array(
                 'post_type' => 'clients',
                 'posts_per_page' => -1,
                 $term->taxonomy => $term->slug,
                 'order' => 'ASC',
-                'orderby' => 'menu_order',
+                'orderby' => 'menu_order'
             ));
             echo '<h3>' . $term->name . ' Level</h3>';
 
             if ($clients->have_posts()): ?>
-          <ul class="mem_level-<?php echo $term->slug;?>clear">
-<?php while ($clients->have_posts()):$clients->the_post();?>
-	              <li><?php if ($term->term_id != 27) {?><a href="<?php the_permalink();?>" title="<?php the_title();?>"><?php }
-
-                if (has_post_thumbnail()) {
-                    the_post_thumbnail('client_logo');
-                } else {
-                    echo "<span>";
-                    the_title();
-                    echo "</span>";
-                }
-                ?><?php if ($term->term_id != 27) {?></a><?php }?></li>
-	<?php endwhile;?>
-</ul>
-<?php else:
+            <ul class="mem_level-<?php echo $term->slug;?> clear">
+                <?php while ($clients->have_posts()):$clients->the_post();
+                    $client = has_post_thumbnail() ? the_post_thumbnail(get_the_ID(), 'client_logo') : KwikUtils::markup('span', get_the_title());
+                    echo KwikUtils::markup('li', $client);
+                 endwhile;?>
+            </ul>
+            <?php else:
                 echo '<p>' . $term->name . ' membership level available</p>';
             endif;?>
         <?php wp_reset_postdata(); // Don't forget to reset again!
