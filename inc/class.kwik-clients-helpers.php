@@ -33,6 +33,16 @@ class K_CLIENTS_HELPERS extends KwikClients
         return $columns;
     }
 
+    public static function icons()
+    {
+          return array(
+            'dashicons-admin-users'  => 'User',
+            'dashicons-universal-access' => 'Universal Access',
+            'dashicons-awards' => 'Award',
+            'dashicons-networking' => 'Networking'
+            );
+    }
+
     public static function k_client_logo_text_filter($translated_text, $untranslated_text, $domain)
     {
         global $post, $typenow, $current_screen;
@@ -66,7 +76,7 @@ class K_CLIENTS_HELPERS extends KwikClients
 
     public static function clients_at_a_glance()
     {
-        Kwikutils::cpt_at_a_glance('clients');
+        KwikUtils::cpt_at_a_glance('clients');
     }
 
 }

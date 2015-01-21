@@ -3,6 +3,9 @@
 class K_CLIENTS_META extends KwikClients{
 
   public function __construct(){
+
+
+    // Taxonomy Meta Fields
     add_action('client_levels_add_form_fields', array( $this, 'client_levels_add_new_meta_field'), 10, 2);
     add_action('edited_client_levels', array( $this, 'save_client_levels_custom_meta'), 10, 2);
     add_action('create_client_levels', array( $this, 'save_client_levels_custom_meta'), 10, 2);
@@ -90,9 +93,8 @@ class K_CLIENTS_META extends KwikClients{
   }
 
   // Save extra taxonomy fields callback function.
-  public function save_client_levels_custom_meta($term_id) {
-    if (isset($_POST['term_meta'])) {
-      $t_id = $term_id;
+  public function save_client_levels_custom_meta($t_id) {
+    if (isset($_POST['term_meta'], $t_id)) {
       $term_meta = get_option("taxonomy_$t_id");
       $keys = array_keys($_POST['term_meta']);
       foreach ($keys as $key) {

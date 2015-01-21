@@ -1,11 +1,11 @@
 <?php
 
-require_once 'class.helpers.php';
-require_once 'class.meta.php';
+require_once 'class.kwik-clients-helpers.php';
 
 class KwikClients
 {
     static $helpers;
+    const CPT = 'clients';
 
     public function __construct()
     {
@@ -30,11 +30,16 @@ class KwikClients
         // Do garbage cleanup stuff here
     }
 
+    // function showConstant() {
+    //     echo  self::CONSTANT . "\n";
+    // }
+
     public function admin()
     {
         if (!isset($this->admin)) {
             require_once __DIR__ . '/class.kwik-clients-admin.php';
-            $this->admin = new KwikClients_Admin($this);
+            require_once __DIR__ . '/class.kwik-clients-settings.php';
+            $this->admin = new KwikClientsAdmin($this);
         }
         return $this->admin;
     }
@@ -48,21 +53,28 @@ class KwikClients
     public function clients_create_post_type()
     {
 
+        $settings = get_option(K_CLIENTS_SETTINGS);
+
+        $plugin = array(
+            'name' => isset($settings['name']) ? $settings['name'] : 'Client',
+            'name_plural' => isset($settings['name_plural']) ? $settings['name_plural'] : 'Clients',
+            'dash_icon' => isset($settings['dash_icon']) ? $settings['dash_icon'] : 'dashicons-awards'
+        );
+
         self::create_clients_taxonomies();
-        new K_CLIENTS_META();
 
         register_post_type('clients',
             array(
                 'labels' => array(
                     'name' => __('Clients', 'kwik'),
-                    'all_items' => __('Clients', 'kwik'),
-                    'singular_name' => __('Client', 'kwik'),
-                    'add_new' => __('Add Client', 'kwik'),
-                    'add_new_item' => __('Add New Client', 'kwik'),
-                    'edit_item' => __('Edit Client', 'kwik'),
-                    'menu_name' => __('Clients', 'kwik'),
+                    'all_items' => __($plugin['name_plural'], 'kwik'),
+                    'singular_name' => __($plugin['name'], 'kwik'),
+                    'add_new' => __("Add ${plugin['name']}", 'kwik'),
+                    'add_new_item' => __("Add New ${plugin['name']}", 'kwik'),
+                    'edit_item' => __("Edit ${plugin['name']}", 'kwik'),
+                    'menu_name' => __($plugin['name_plural'], 'kwik'),
                 ),
-                'menu_icon' => 'dashicons-awards',
+                'menu_icon' => $plugin['dash_icon'],
                 'menu_position' => 5,
 
                 'supports' => array('title', 'editor', 'thumbnail', 'author'),
