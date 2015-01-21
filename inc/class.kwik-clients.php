@@ -22,7 +22,7 @@ class KwikClients
         self::load_widgets();
 
         // Cleanup on deactivation
-        register_deactivation_hook(__FILE__, array($this, '__destruct'));
+        // register_deactivation_hook(__FILE__, array($this, '__destruct'));
     }
 
     public function __destruct()
@@ -30,15 +30,11 @@ class KwikClients
         // Do garbage cleanup stuff here
     }
 
-    // function showConstant() {
-    //     echo  self::CONSTANT . "\n";
-    // }
-
     public function admin()
     {
         if (!isset($this->admin)) {
-            require_once __DIR__ . '/class.kwik-clients-admin.php';
-            require_once __DIR__ . '/class.kwik-clients-settings.php';
+            include_once __DIR__ . '/class.kwik-clients-admin.php';
+            include_once __DIR__ . '/class.kwik-clients-settings.php';
             $this->admin = new KwikClientsAdmin($this);
         }
         return $this->admin;
@@ -46,15 +42,12 @@ class KwikClients
 
     public function scripts_and_styles()
     {
-        wp_enqueue_script('jquery-cycle', 'http://malsup.github.io/min/jquery.cycle2.min.js', array('jquery'));
         wp_enqueue_style('kwik-clients-css', K_CLIENTS_URL . '/css/' . K_CLIENTS_BASENAME . '.css', false, '2014-12-31');
     }
 
     public function clients_create_post_type()
     {
-
         $settings = get_option(K_CLIENTS_SETTINGS);
-
         $plugin = array(
             'name' => isset($settings['name']) ? $settings['name'] : 'Client',
             'name_plural' => isset($settings['name_plural']) ? $settings['name_plural'] : 'Clients',
@@ -63,7 +56,8 @@ class KwikClients
 
         self::create_clients_taxonomies();
 
-        register_post_type('clients',
+        register_post_type(
+            'clients',
             array(
                 'labels' => array(
                     'name' => __('Clients', 'kwik'),
@@ -94,23 +88,31 @@ class KwikClients
 
     public function create_clients_taxonomies()
     {
-        register_taxonomy('client_sector', array('clients'), array(
-            'hierarchical' => true,
-            'labels' => self::make_labels('Industry', 'Industries'),
-            'show_ui' => true,
-            'query_var' => true,
-            'show_admin_column' => true,
-            'rewrite' => array('slug' => 'member-industry', 'hierarchical' => true),
-        ));
+        register_taxonomy(
+            'client_sector',
+            array('clients'),
+            array(
+                'hierarchical' => true,
+                'labels' => self::make_labels('Industry', 'Industries'),
+                'show_ui' => true,
+                'query_var' => true,
+                'show_admin_column' => true,
+                'rewrite' => array('slug' => 'member-industry', 'hierarchical' => true),
+                )
+        );
 
-        register_taxonomy('client_levels', array('clients'), array(
-            'hierarchical' => true,
-            'labels' => self::make_labels('Level', 'Levels'),
-            'show_ui' => true,
-            'query_var' => true,
-            'show_admin_column' => true,
-            'rewrite' => array('slug' => 'member-level', 'hierarchical' => true),
-        ));
+        register_taxonomy(
+            'client_levels',
+            array('clients'),
+            array(
+                'hierarchical' => true,
+                'labels' => self::make_labels('Level', 'Levels'),
+                'show_ui' => true,
+                'query_var' => true,
+                'show_admin_column' => true,
+                'rewrite' => array('slug' => 'member-level', 'hierarchical' => true),
+            )
+        );
     }
 
     private static function make_labels($single, $plural)
@@ -133,13 +135,15 @@ class KwikClients
         <div class="member_table">
         <?php $terms = get_terms("client_levels", 'orderby=id&hide_empty=0');
         foreach ($terms as $term) {
-            $clients = new WP_Query(array(
-                'post_type' => 'clients',
-                'posts_per_page' => -1,
-                $term->taxonomy => $term->slug,
-                'order' => 'ASC',
-                'orderby' => 'menu_order'
-            ));
+            $clients = new WP_Query(
+                array(
+                    'post_type' => 'clients',
+                    'posts_per_page' => -1,
+                    $term->taxonomy => $term->slug,
+                    'order' => 'ASC',
+                    'orderby' => 'menu_order'
+                )
+            );
             echo '<h3>' . $term->name . ' Level</h3>';
 
             if ($clients->have_posts()): ?>
@@ -157,20 +161,21 @@ class KwikClients
     </div><?php
 }// member_table()
 
-/**
- * Adds `membership_table` shortcode.
- * @param  [Array] $atts array of attribute to pass
- * @return [String]      Markup to display array of client data
- *
- * Usage: [membership_table foo="foo-value"]
- * TODO: use Kwik Framework markup generator
- */
+    /**
+     * Adds `membership_table` shortcode.
+     * Usage: [membership_table foo="foo-value"]
+     *
+     * @todo   use Kwik Framework markup generator, no concat, make tax meta generator
+     * @param  [Array] $atts array of attribute to pass
+     * @return [String]      Markup to display array of client data
+     *
+     */
     public function membership_table($atts)
     {
-        extract(shortcode_atts(array(
-            'foo' => 'something',
-            'bar' => 'something else',
-        ), $atts));
+        // extract(shortcode_atts(array(
+        //     'foo' => 'something',
+        //     'bar' => 'something else',
+        // ), $atts));
 
         $memb_table = '<!-- BEGIN [membership_table] -->';
         $terms = get_terms("client_levels", 'orderby=id&hide_empty=0&exclude=27');
@@ -234,15 +239,15 @@ class KwikClients
         if (isset($args['level'])) {
             $query_args['client_levels'] = $args['level'];
             $term = get_term_by('slug', $args['level'], 'client_levels');
-            $cl = $inputs->markup('h3', $term->name . ' Members');
+            $client_logos = $inputs->markup('h3', $term->name . ' Members');
         }
 
         $client_query = new WP_Query($query_args);
 
-        $i = 1;
+        $index = 1;
         $total = $client_query->post_count;
-        if ($client_query->have_posts()):
-            $cl = '';
+        if ($client_query->have_posts()) :
+            $client_logos = '';
             while ($client_query->have_posts()):$client_query->the_post();
                 global $more;
                 $more = 0;
@@ -251,23 +256,23 @@ class KwikClients
                 $client_name = get_the_title($client_id);
                 $logo_or_name = (has_post_thumbnail() && $args['show_thumbs']) ? get_the_post_thumbnail($client_id, 'client_logo') : $client_name;
                 $client = $inputs->markup('a', $logo_or_name, array('href' => get_the_permalink($client_id), 'title' => $client_name));
-                $cl .= $inputs->markup('div', $client, array("class" => "client client-" . $client_id . " nth-client-" . $i));
-                $i++;
+                $client_logos .= $inputs->markup('div', $client, array("class" => "client client-" . $client_id . " nth-client-" . $index));
+                $index++;
             endwhile;
         endif;
         wp_reset_postdata();
 
         $term_class = isset($term) ? $term->slug . '-members' : null;
 
-        $cl = $inputs->markup('div', $cl, array('class' => array('member-level', $term_class, 'clear')));
+        $client_logos = $inputs->markup('div', $cl, array('class' => array('member-level', $term_class, 'clear')));
 
-        echo $cl;
+        echo $client_logos;
     }
 
     public function load_widgets()
     {
         foreach (glob(K_CLIENTS_PATH . "/widgets/*.php") as $inc_filename) {
-            require_once $inc_filename;
+            include_once $inc_filename;
         }
     }
 
