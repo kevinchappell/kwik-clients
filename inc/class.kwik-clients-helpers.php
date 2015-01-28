@@ -68,6 +68,10 @@ class K_CLIENTS_HELPERS extends KwikClients
                     $translated_text = __("Set {$plugin['name']} Image", 'kwik');
                     break;
 
+                case 'Remove featured image':
+                    $translated_text = __("Remove {$plugin['name']} Image", 'kwik');
+                    break;
+
                 case 'Featured Image':
                     $translated_text = __("{$plugin['name']} Image", 'kwik');
                     break;
