@@ -37,6 +37,7 @@ class K_CLIENTS_HELPERS extends KwikClients
     {
           return array(
             'dashicons-admin-users'  => 'User',
+            'dashicons-businessman'  => 'Business Person',
             'dashicons-universal-access' => 'Universal Access',
             'dashicons-awards' => 'Award',
             'dashicons-networking' => 'Networking'
