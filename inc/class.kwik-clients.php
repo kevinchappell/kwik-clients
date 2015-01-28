@@ -15,19 +15,30 @@ class KwikClients
         if (is_admin()) {
             $this->admin();
         } else {
-            add_action('wp_enqueue_scripts', array($this, 'scripts_and_styles'));
+            add_action('wp_enqueue_scripts', array(&$this, 'scripts_and_styles'));
         }
 
         // widgets
         self::load_widgets();
 
         // Cleanup on deactivation
-        // register_deactivation_hook(__FILE__, array($this, '__destruct'));
+        register_activation_hook(__FILE__, array(&$this, 'activation'));
+        register_deactivation_hook(__FILE__, array(&$this, 'deactivate'));
     }
 
     public function __destruct()
     {
-        // Do garbage cleanup stuff here
+        // Garbage cleanup
+    }
+
+    public function activate()
+    {
+        flush_rewrite_rules(false);
+    }
+
+    public function deactivate()
+    {
+        flush_rewrite_rules(false);
     }
 
     public function admin()
@@ -76,14 +87,13 @@ class KwikClients
                 'exclude_from_search' => false,
                 'has_archive' => true,
                 'taxonomies' => array('client_sector', 'client_levels'),
-                // 'register_meta_box_cb' => 'add_clients_metabox',
+                'register_meta_box_cb' => array('K_CLIENTS_META', 'add_clients_metabox'),
                 'rewrite' => array('slug' => 'clients'),
                 'query_var' => true,
             )
         );
 
         add_image_size('client_logo', 240, 240, false);
-        flush_rewrite_rules(false);
     }
 
     public function create_clients_taxonomies()
@@ -264,7 +274,7 @@ class KwikClients
 
         $term_class = isset($term) ? $term->slug . '-members' : null;
 
-        $client_logos = $inputs->markup('div', $cl, array('class' => array('member-level', $term_class, 'clear')));
+        $client_logos = $inputs->markup('div', $client_logos, array('class' => array('member-level', $term_class, 'clear')));
 
         echo $client_logos;
     }

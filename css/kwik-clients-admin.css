@@ -19,3 +19,42 @@
   width: 100%;
   height: auto;
 }
+.logo_meta {
+  float: left;
+  width: 180px;
+  /*height: 180px;*/
+}
+.logo_meta label {
+  display: block;
+}
+.kf_field.logo_meta .img_prev {
+  background-image: none;
+  width: 150px;
+  height: 150px;
+  -webkit-background-size: 100%;
+  -moz-background-size: 100%;
+  -o-background-size: 100%;
+  background-size: 100%;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+  font-family: dashicons;
+}
+.kf_field.logo_meta .img_prev:before {
+  font-size: 9em;
+  line-height: 1.3em;
+}
+.kf_field.logo_meta .img_prev.no-image:before {
+  content: "\f502";
+}
+
+.kf_field.logo_meta .upload_img {
+  display: none;
+}
+#clients_meta .inside {
+  clear: both;
+}
+#clients_meta .inside:before, #clients_meta .inside:after {
+  clear: both;
+  display: table;
+  content: "";
+}

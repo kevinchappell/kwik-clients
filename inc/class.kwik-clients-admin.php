@@ -22,7 +22,6 @@ class KwikClientsAdmin
         add_action('admin_enqueue_scripts', array( $this, 'add_clients_script' ));
         add_action('manage_clients_posts_custom_column', array( $this, 'clients_columns_content' ), 10, 2);
         add_action('wp_ajax_clients_update_post_order', array( $this, 'clients_update_post_order' ));
-        add_action('save_post', array( $this, 'save_clients_meta' ), 1, 2);
         add_action('admin_menu', array( $this, 'register_clients_menu' ));
         add_shortcode('membership_table', array( $this, 'membership_table'));
 
@@ -49,10 +48,9 @@ class KwikClientsAdmin
 
         // Check screen hook and current post type
         if ( in_array($screen->post_type, $post_types_array)) {
-            wp_enqueue_script('jquery-ui-autocomplete');
-            wp_enqueue_script('jquery-ui-sortable');
-            wp_enqueue_script('kwik-clients-admin', K_CLIENTS_URL . '/js/kwik-clients-admin.js', array('jquery-ui-autocomplete', 'jquery-ui-sortable', 'jquery'), null, true);
-            wp_enqueue_script('kwik-clients', K_CLIENTS_URL . '/js/kwik-clients.js', array('jquery-ui-autocomplete', 'jquery-ui-sortable', 'jquery'), null, true);
+            wp_enqueue_style(K_CLIENTS_BASENAME . '-admin-css', K_CLIENTS_URL . '/css/' . K_CLIENTS_BASENAME . '-admin.css', false, '2015-1-27');
+            wp_enqueue_script(K_CLIENTS_BASENAME . '-admin', K_CLIENTS_URL . '/js/' . K_CLIENTS_BASENAME . '-admin.js', array('jquery-ui-autocomplete', 'jquery-ui-sortable', 'jquery'), null, true);
+            wp_enqueue_script(K_CLIENTS_BASENAME, K_CLIENTS_URL . '/js/' . K_CLIENTS_BASENAME . '.js', array('jquery-ui-autocomplete', 'jquery-ui-sortable', 'jquery'), null, true);
         }
     }
 
@@ -73,89 +71,6 @@ class KwikClientsAdmin
             }
             break;
         }
-    }
-
-
-    // Add the meta box
-    public function add_clients_metabox()
-    {
-      add_meta_box('clients_meta', 'Client Meta Data', 'clients_meta', 'clients', 'normal', 'default');
-    }
-
-
-    public function clients_meta()
-    {
-        global $post;
-
-      $post_link = get_post_meta($post->ID, '_post_link', true);
-      $user_info = get_post_meta($post->ID, '_user_info', false);
-      $user_info = (is_array($user_info) && !empty($user_info) ? $user_info[0] : '');
-
-
-      $clients_meta = '';
-        // Noncename for security check on data origin
-        $clients_meta .= '<input type="hidden" name="clients_meta_noncename" id="clients_meta_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
-      $clients_meta .= '<div class="meta_wrap">';
-      $clients_meta .= '<ul>';
-        //$clients_meta .= '<li><strong>'.__('Belt Link','kwik').':</strong></li>';
-        $clients_meta .= '<li><label>'.__('Post Link','kwik').'</label><input type="text" name="_post_link_title" id="post_link_title"" value="'.($post_link != "" ? get_the_title($post_link) : "").'" /><input type="hidden" id="post_link_id" name="_post_link" value="'.$post_link.'" /><label>&nbsp;</label><small>Type the name of the linked content and select from list</small></li>';
-      $clients_meta .= '</ul>';
-      $clients_meta .= '</div>';
-
-      $clients_meta .= '<div class="meta_wrap user_info">';
-      $clients_meta .= '<h4>'.__('Customer Info','kwik').':</h4>';
-      $clients_meta .= (isset($user_info[1]) ? get_avatar( $user_info[1], 200 ) : '');
-      $clients_meta .= '<ul>';
-
-        $clients_meta .= '<li><label>'.__('Name','kwik').'</label><input type="text" name="_user_info[]" value="'.(isset($user_info[0]) ? $user_info[0] : '').'" /></li>';
-        $clients_meta .= '<li><label>'.(isset($user_info[1]) ? '<a href="mailto:'.$user_info[1].'?subject=Your%20submission%20has%20been%20approved!&body=Check%20out%20your%20Action%20Shot%20on%20TopRopeBelts.com%20here: '.get_permalink($post->ID).'" title="'.(isset($user_info[0]) ? 'Send email to '.$user_info[0] : '').'">'.__('Email','kwik').'</a>' : __('Email','kwik')).'</label><input type="text" name="_user_info[]" value="'.(isset($user_info[1]) ? $user_info[1] : '').'" /></li>';
-        $clients_meta .= '<li><label>'.__('Phone','kwik').'</label><input type="text" name="_user_info[]" value="'.(isset($user_info[2]) ? $user_info[2] : '').'" /></li>';
-        $clients_meta .= '<li><label>'.__('URL','kwik').'</label><input type="text" name="_user_info[]" value="'.(isset($user_info[3]) ? $user_info[3] : '').'" /></li>';
-        $clients_meta .= '<li><label>'.__('Twitter','kwik').'</label><input type="text" name="_user_info[]" value="'.(isset($user_info[4]) ? $user_info[4] : '').'" /></li>';
-        $clients_meta .= '<li><label>'.__('Publish User Info?','kwik').'</label><input type="checkbox" name="_user_info[]" '. checked( 1, $user_info[5], false ) . ' value="1" /></li>';
-      $clients_meta .= '</ul>';
-      $clients_meta .= '</div>';
-
-
-      $clients_meta .= '<br class="clear"/>';
-
-      echo  $clients_meta;
-
-    }
-
-
-    // Save the Metabox Data
-    public function save_clients_meta($post_id, $post)
-    {
-
-
-      if($post->post_status =='auto-draft') return;
-
-
-      if($post->post_type!='clients') return $post->ID;
-        // make sure there is no conflict with other post save function and verify the noncename
-        if (!wp_verify_nonce($_POST['clients_meta_noncename'], plugin_basename(__FILE__))) {
-            return $post->ID;
-        }
-
-      $_POST['_user_info'][3] = (preg_match("#https?://#", $_POST['_user_info'][3]) === 0 && !empty($_POST['_user_info'][3]) ? 'http://' . $_POST['_user_info'][3] : $_POST['_user_info'][3]);
-      $_POST['_user_info'][4] = (preg_match("/\@[a-z0-9_]+/i", $_POST['_user_info'][4]) != 0 ? str_replace('@', '', $_POST['_user_info'][4]) : $_POST['_user_info'][4]);
-
-
-        // Is the user allowed to edit the post or page?
-        if (!current_user_can('edit_post', $post->ID)) return $post->ID;
-
-        $clients_meta = array(
-        '_post_link' => $_POST['_post_link'],
-        '_user_info' => $_POST['_user_info']
-        );
-
-        // Add values of $clients_meta as custom fields
-        foreach ($clients_meta as $key => $value) {
-            if( $post->post_type == 'revision' ) return;
-            __update_post_meta( $post->ID, $key, $value );
-        }
-
     }
 
 
