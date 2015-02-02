@@ -244,6 +244,7 @@ class KwikClients
             'post_type' => 'clients',
             'orderby' => $args['orderby'],
             'order' => $args['order'],
+            'posts_per_page' => -1
         );
 
         if (isset($args['level'])) {

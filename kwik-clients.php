@@ -4,7 +4,7 @@ Plugin Name: Kwik Clients
 Plugin URI: http://kevin-chappell.com/kwik-clients
 Description: Display and manage your clients and their logos. Works well for attributing resources or portfolio work.
 Author: Kevin Chappell
-Version: .3
+Version: .5
 Author URI: http://kevin-chappell.com
  */
 
