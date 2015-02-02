@@ -41,8 +41,9 @@ class KwikClientsSettings
     public function settings_init()
     {
         $utils = new KwikUtils();
+        $kwik_settings = new KwikSettings();
         $default_settings = $this->default_options();
-        $utils->settings_init(KT_BASENAME, K_CLIENTS_SETTINGS, $default_settings);
+        $kwik_settings->settings_init(KT_BASENAME, K_CLIENTS_SETTINGS, $default_settings);
     }
 
     public function help_screen()
@@ -97,10 +98,9 @@ class KwikClientsSettings
         echo KwikInputs::markup('h2', __("{$this->plugin['Name']} Settings", 'kwik'));
         echo '<form action="options.php" method="post">';
         settings_fields(K_CLIENTS_SETTINGS);
-        echo KwikUtils::settings_sections(K_CLIENTS_SETTINGS, $settings);
+        echo KwikSettings::settings_sections(K_CLIENTS_SETTINGS, $settings);
         echo '</form>';
         echo '</div>';
-        echo KwikInputs::markup('div', $output, array('class' => 'wrap'));
     }
 
     public static function get_options()
