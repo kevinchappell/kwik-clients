@@ -73,9 +73,6 @@ class KwikClientsAdmin
         }
     }
 
-
-
-
     public function register_clients_menu()
     {
       add_submenu_page('edit.php?post_type=clients', 'Order Clients', 'Order', 'edit_pages', 'clients-order', array($this,'clients_order_page'));
@@ -83,34 +80,42 @@ class KwikClientsAdmin
 
     public function clients_order_page()
     {
+      $settings = get_option(K_CLIENTS_SETTINGS);
     ?>
 
       <div class="wrap">
 
-        <h2>Sort Clients</h2>
+        <?php echo '<h2>'. __("Sort {$settings['name_plural']}", 'kwik').'</h2>'; ?>
 
-        <p>Simply drag the client up or down and they will be saved in the order the appear here.</p>
+        <p>Drag the client up or down and they will be saved in the order the appear here.</p>
 
       <?php
 
-      $terms = get_terms("client_levels", 'orderby=id&hide_empty=1' );
+    $terms = get_terms('client_levels', 'orderby=id&hide_empty=1' );
 
-            foreach ($terms as $term) {
+    if(empty($terms)){
+        $terms[0] = new stdClass();
+        $terms[0]->taxonomy = 'none';
+        $terms[0]->name = '';
+    }
+        foreach ($terms as $term) {
             $clients = new WP_Query(array(
                 'post_type' => 'clients',
                 'posts_per_page' => -1,
-                'tax_query' => array(
+                'order' => 'ASC',
+                'orderby' => 'menu_order'
+            ));
+            if($term->taxonomy !== 'none'){
+                $client['tax_query'] = array(
                   array(
                     'taxonomy' => $term->taxonomy,
                     'field' => 'id',
                     'terms' => $term->term_id, // Where term_id of Term 1 is "1".
                     'include_children' => false
                   )
-                ),
-                'order' => 'ASC',
-                'orderby' => 'menu_order'
-            ));
-            echo '<h1>'.$term->name.' Level</h1>';
+                );
+            }
+            echo '<h1>'.$term->name.'</h1>';
             if ($clients->have_posts()): ?>
             <table class="wp-list-table widefat fixed posts" id="sortable-table">
               <thead>

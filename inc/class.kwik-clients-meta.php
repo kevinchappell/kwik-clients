@@ -117,7 +117,7 @@ class K_CLIENTS_META extends KwikClients{
     public static function add_clients_metabox()
     {
         $settings = get_option(K_CLIENTS_SETTINGS);
-        add_meta_box('clients_meta', 'Client Meta Data', array('K_CLIENTS_META', 'clients_meta'), K_CLIENTS_CPT, 'normal', 'default');
+        add_meta_box('clients_meta', __("{$settings['name']} Meta Data", 'kwik'), array('K_CLIENTS_META', 'clients_meta'), K_CLIENTS_CPT, 'normal', 'default');
         $client_name = $string = preg_replace('/\s+/', '', strtolower($settings['name']));
         $client_info_fields = array(
             'logo_meta' => array(
@@ -140,7 +140,7 @@ class K_CLIENTS_META extends KwikClients{
             'twitter_meta' => array(
                 'type' => 'text',
                 'title' => __('Twitter: ', 'kwik'),
-                'value' => 'Clients',
+                'value' => null,
                 'attrs' => array(
                     'placeholder' => __("@{$client_name}Name", 'kwik')
                     )
