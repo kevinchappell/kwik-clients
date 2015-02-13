@@ -168,12 +168,10 @@ class K_CLIENTS_META extends KwikClients{
     // Save the Metabox Data
     public static function save_clients_meta($post_id, $post)
     {
-
-      if($post->post_status =='auto-draft' || $post->post_type !== 'clients') return;
+        if($post->post_status =='auto-draft' || $post->post_type !== 'clients') return;
 
         $meta = new KwikMeta();
         $meta->save_meta($post, 'client_info_fields');
-
     }
 
 }

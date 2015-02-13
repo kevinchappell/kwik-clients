@@ -16,5 +16,5 @@ define('K_CLIENTS_PATH', dirname(__FILE__));
 define('K_CLIENTS_CPT', 'clients');
 
 // Load the core.
-  require_once __DIR__ . '/inc/class.kwik-clients.php';
-  kwikclients();
+require_once __DIR__ . '/inc/class.kwik-clients.php';
+kwikclients();

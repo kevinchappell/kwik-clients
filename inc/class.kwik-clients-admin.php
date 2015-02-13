@@ -19,10 +19,10 @@ class KwikClientsAdmin
     public function __construct()
     {
         include_once 'class.kwik-clients-meta.php';
-        add_action('admin_enqueue_scripts', array( $this, 'add_clients_script' ));
-        add_action('manage_clients_posts_custom_column', array( $this, 'clients_columns_content' ), 10, 2);
-        add_action('wp_ajax_clients_update_post_order', array( $this, 'clients_update_post_order' ));
-        add_action('admin_menu', array( $this, 'register_clients_menu' ));
+        add_action('admin_enqueue_scripts', array( $this, 'add_clients_script'));
+        add_action('manage_clients_posts_custom_column', array( $this, 'clients_columns_content'), 10, 2);
+        add_action('wp_ajax_clients_update_post_order', array( $this, 'clients_update_post_order'));
+        add_action('admin_menu', array( $this, 'register_clients_menu'));
         add_shortcode('membership_table', array( $this, 'membership_table'));
 
         // Utils/Helpers
@@ -75,11 +75,13 @@ class KwikClientsAdmin
 
     public function register_clients_menu()
     {
-      add_submenu_page('edit.php?post_type=clients', 'Order Clients', 'Order', 'edit_pages', 'clients-order', array($this,'clients_order_page'));
+        add_submenu_page('edit.php?post_type=clients', 'Order Clients', 'Order', 'edit_pages', 'clients-order', array($this,'clients_order_page'));
     }
 
     public function clients_order_page()
     {
+      global $typenow;
+
       $settings = get_option(K_CLIENTS_SETTINGS);
     ?>
 
@@ -91,7 +93,7 @@ class KwikClientsAdmin
 
       <?php
 
-    $terms = get_terms('client_levels', 'orderby=id&hide_empty=1' );
+        $terms = get_terms('client_levels', 'orderby=id&hide_empty=1');
 
     if(empty($terms)){
         $terms[0] = new stdClass();
