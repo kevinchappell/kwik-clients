@@ -8,7 +8,7 @@ class K_CLIENTS_HELPERS extends KwikClients
         $this->name = "K_CLIENTS_HELPERS";
     }
 
-    public function array_insert_at_position($array, $values, $pivot, $position = 'after')
+    public static function array_insert_at_position($array, $values, $pivot, $position = 'after')
     {
 
         $offset = 0;
@@ -27,7 +27,7 @@ class K_CLIENTS_HELPERS extends KwikClients
     }
 
     // ADD NEW COLUMN
-    public function add_clients_columns($columns)
+    public static function add_clients_columns($columns)
     {
         $columns = self::array_insert_at_position($columns, array('featured_image' => __('Image')), 'cb');
         return $columns;

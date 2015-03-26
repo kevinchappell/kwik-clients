@@ -49,7 +49,7 @@ class Clients_Table extends WP_Widget {
     $width = $width-2+(2/$cpr); // factor in the margin-right
     $add_style = '<style type="text/css">';
     $add_style .= '.cpt_clients_widget .client{width:'.round($width, 2).'%}';
-    $add_style .= '.cpt_clients_widget .client.nth-client-'.$cpr.'{margin-right:0}';
+    $add_style .= '.cpt_clients_widget .client:nth-child('.$cpr.'){margin-right:0}';
     $add_style .= '</style>';
     echo $add_style;
   }
@@ -67,12 +67,14 @@ class Clients_Table extends WP_Widget {
     $order = $instance['order'];
     $clients_per_row = intval($instance['clients_per_row']);
     $show_thumbs = isset( $instance['show_thumbs'] ) ? 1 : 0;
+    $group_by_level = isset( $instance['group_by_level'] ) ? 1 : 0;
 
     $args = array(
       'levels' => $instance['levels'],
       'orderby' => $instance['orderby'],
       'order' => $instance['order'],
-      'show_thumbs' => $instance['show_thumbs']
+      'show_thumbs' => $instance['show_thumbs'],
+      'group_by_level' => $instance['group_by_level']
     );
 
     // custom styling based on widget settings
@@ -85,13 +87,13 @@ class Clients_Table extends WP_Widget {
       echo $before_title . $title . $after_title;
     }
 
-    if($instance['levels']){
+    if( ! $instance['levels'] ){
+      $KwikClients->client_logos($args);
+    } else {
       foreach($instance['levels'] as $level){
         $args['level'] = $level;
         $KwikClients->client_logos($args);
       }
-    } else {
-        $KwikClients->client_logos($args);
     }
 
     echo $after_widget;
@@ -109,6 +111,7 @@ class Clients_Table extends WP_Widget {
     $instance['orderby'] = strip_tags( $new_instance['orderby'] );
     $instance['order'] = strip_tags( $new_instance['order'] );
     $instance['show_thumbs'] = $new_instance['show_thumbs'];
+    $instance['group_by_level'] = $new_instance['group_by_level'];
     $instance['clients_per_row'] = strip_tags( $new_instance['clients_per_row'] );
     return $instance;
   }
@@ -126,6 +129,7 @@ class Clients_Table extends WP_Widget {
       'orderby' => 'menu_order',
       'order' => 'ASC',
       'show_thumbs' => 0,
+      'group_by_level' => 0,
       'clients_per_row' => 6
     );
     $instance = wp_parse_args( (array) $instance, $defaults );
@@ -140,7 +144,7 @@ class Clients_Table extends WP_Widget {
     foreach ($terms as $term) {
       $cbAttrs = array(
         'id'=> $this->get_field_name( 'levels' ).'-'.$term->slug,
-        'checked' => $instance['levels'][$term->slug] ? TRUE : FALSE
+        'checked' => isset( $instance['levels'][$term->slug] ) ? TRUE : FALSE
         );
       $output .= $inputs->cb($this->get_field_name( 'levels' ).'['.$term->slug.']', $term->slug, $term->name.': ', $cbAttrs);
     }
@@ -149,6 +153,7 @@ class Clients_Table extends WP_Widget {
     $output .= $inputs->select($this->get_field_name( 'order' ), $instance['order'], __('Order: ', 'kwik'), NULL, KwikHelpers::order());
     $output .= $inputs->spinner($this->get_field_name( 'clients_per_row' ), $instance['clients_per_row'], __('Clients per Row: ', 'kwik'), array('min' => '1', 'max'=>'6'));
     $output .= $inputs->cb($this->get_field_name( 'show_thumbs' ), TRUE, __('Show thumbnails: ', 'kwik'), array('checked'=> $instance['show_thumbs'] ? TRUE : FALSE));
+    $output .= $inputs->cb($this->get_field_name( 'group_by_level' ), TRUE, __('Group by Level: ', 'kwik'), array('checked'=> $instance['group_by_level'] ? TRUE : FALSE));
 
     echo $output;
 

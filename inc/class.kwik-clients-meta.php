@@ -10,7 +10,7 @@ class K_CLIENTS_META extends KwikClients{
         add_action('create_client_levels', array( $this, 'save_client_levels_custom_meta'), 10, 2);
         add_action('client_levels_edit_form_fields', array( $this, 'client_levels_edit_meta_field'), 10, 2);
 
-        add_action('save_post', array( $this, 'save_clients_meta' ), 1, 2);
+        add_action('save_post_clients', array( $this, 'save_clients_meta' ), 1, 2);
     }
 
     // Add term page
@@ -168,7 +168,7 @@ class K_CLIENTS_META extends KwikClients{
     // Save the Metabox Data
     public static function save_clients_meta($post_id, $post)
     {
-        if($post->post_status =='auto-draft' || $post->post_type !== 'clients') return;
+        if($post->post_status == 'auto-draft' || $post->post_type !== 'clients') return;
 
         $meta = new KwikMeta();
         $meta->save_meta($post, 'client_info_fields');
