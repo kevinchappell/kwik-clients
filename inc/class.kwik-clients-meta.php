@@ -98,8 +98,7 @@ class K_CLIENTS_META extends KwikClients{
      * @param  [type] $t_id [description]
      * @return [type]       [description]
      */
-    public function save_client_levels_custom_meta($t_id)
-    {
+    public function save_client_levels_custom_meta($t_id) {
         if (isset($_POST['term_meta'], $t_id)) {
             $term_meta = get_option("taxonomy_$t_id");
             $keys = array_keys($_POST['term_meta']);
@@ -114,8 +113,7 @@ class K_CLIENTS_META extends KwikClients{
     }
 
     // Add the meta box
-    public static function add_clients_metabox()
-    {
+    public static function add_clients_metabox() {
         $settings = get_option(K_CLIENTS_SETTINGS);
         add_meta_box('clients_meta', __("{$settings['name']} Meta Data", 'kwik'), array('K_CLIENTS_META', 'clients_meta'), K_CLIENTS_CPT, 'normal', 'default');
         $client_name = $string = preg_replace('/\s+/', '', strtolower($settings['name']));
@@ -159,15 +157,13 @@ class K_CLIENTS_META extends KwikClients{
     }
 
 
-    public static function clients_meta($post)
-    {
+    public static function clients_meta($post) {
         $meta = new KwikMeta();
         echo $meta->get_fields($post, 'client_info_fields');
     }
 
     // Save the Metabox Data
-    public static function save_clients_meta($post_id, $post)
-    {
+    public static function save_clients_meta($post_id, $post) {
         if($post->post_status == 'auto-draft' || $post->post_type !== 'clients') return;
 
         $meta = new KwikMeta();

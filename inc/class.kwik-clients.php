@@ -78,10 +78,10 @@ class KwikClients {
 				'supports' => array('title', 'editor', 'thumbnail', 'author'),
 				'public' => true,
 				'exclude_from_search' => false,
-				'has_archive' => false,
+				'has_archive' => true,
 				'taxonomies' => array('client_levels'),
 				'register_meta_box_cb' => array('K_CLIENTS_META', 'add_clients_metabox'),
-				'rewrite' => array('slug' => 'clients'),
+				// 'rewrite' => array('slug' => 'clients'),
 				'query_var' => true,
 			)
 		);
@@ -230,14 +230,20 @@ class KwikClients {
 		$query_args = array(
 			'post_status' => 'publish',
 			'post_type' => 'clients',
-			'orderby' => $args['orderby'],
-			'order' => $args['order'],
 			'posts_per_page' => 50,
 		);
 
+		if ( isset( $args['orderby'] ) ){
+			$query_args['orderby'] = $args['orderby'];
+		}
+
+		if ( isset( $args['order'] ) ){
+			$query_args['order'] = $args['order'];
+		}
+
 		if ( isset( $args['level'] ) ) {
 			$query_args['client_levels'] = $args['level'];
-			if( $args['group_by_level'] ) {
+			if ( $args['group_by_level'] ) {
 				$term = get_term_by( 'slug', $args['level'], 'client_levels' );
 				$client_logos = $inputs->markup( 'h3', $term->name . ' Members' );
 			}

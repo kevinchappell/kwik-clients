@@ -11,6 +11,7 @@
 }
 .cpt_clients_widget .client {
   float: left;
+	width:100%;
   margin-right: 2%;
   text-align: center;
   height: 76px;
@@ -36,7 +37,7 @@
   margin-right: 0;
 }
 .cpt_clients_widget .attachment-client_logo {
-  max-width: 100%;
+  width: 100%;
   height: auto;
   display: inline-block;
   vertical-align: middle;
