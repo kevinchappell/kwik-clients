@@ -47,7 +47,7 @@ class Clients_Table extends WP_Widget {
 	function add_style($cpr) {
 		$width = $cpr !== 0 ? 100 / $cpr : 100;
 		$width = $width - 2 + ( 2 / $cpr ); // factor in the margin-right
-		$add_style = '<style type="text/css">';
+		$add_style = '<style type="text/css" scoped>';
 		$add_style .= '@media screen and (min-width: 740px) {';
 			$add_style .= '.cpt_clients_widget .client{width:'.round($width, 2).'%}';
 			$add_style .= '.cpt_clients_widget .client:nth-child('.$cpr.'){margin-right:0}';
