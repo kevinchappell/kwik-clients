@@ -41,7 +41,7 @@ class Clients_Table extends WP_Widget {
 		$control_ops = array( 'width' => 150, 'height' => 350, 'id_base' => 'cpt-clients-widget' );
 
 		/* Create the widget. */
-		$this->WP_Widget( 'cpt-clients-widget', esc_html__( 'Kwik Clients Logos', 'kwik' ), $widget_ops, $control_ops );
+		parent::__construct( 'cpt-clients-widget', esc_html__( 'Kwik Clients Logos', 'kwik' ), $widget_ops, $control_ops );
 	}
 
 	function add_style($cpr) {
