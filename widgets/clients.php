@@ -33,7 +33,7 @@ class Clients_Table extends WP_Widget {
 	/**
 	 * Widget setup.
 	 */
-	function Clients_Table() {
+	public function __construct() {
 		/* Widget settings. */
 		$widget_ops = array( 'classname' => 'cpt_clients_widget', 'description' => esc_html__('List all your clients', 'kwik') );
 

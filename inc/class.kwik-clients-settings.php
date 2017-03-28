@@ -19,10 +19,10 @@ class KwikClientsSettings {
 	public function add_settings_page() {
 		$settings = $this->get_options();
 
-		$this->plugin = get_plugin_data( K_CLIENTS_PATH . '/' . K_CLIENTS_BASENAME . '.php', true, true );
+		$this->plugin = get_plugin_data(K_CLIENTS_PATH . '/' . K_CLIENTS_BASENAME . '.php', true, true);
 		$settings_page = add_submenu_page(
 			'edit.php?post_type=' . K_CLIENTS_CPT,
-			__( "{$this->plugin['Name']} Settings", 'kwik' ),
+			__("{$this->plugin['Name']} Settings", 'kwik' ),
 			__( 'Settings', 'kwik' ),
 			'manage_options',
 			K_CLIENTS_BASENAME,
@@ -33,14 +33,14 @@ class KwikClientsSettings {
 			return;
 		}
 
-		add_action( "load-$settings_page", array( $this, 'help_screen' ) );
+		add_action("load-$settings_page", array( $this, 'help_screen' ));
 	}
 
 	public function settings_init() {
 		$utils = new KwikUtils();
 		$kwik_settings = new KwikSettings();
 		$default_settings = $this->default_options();
-		$kwik_settings->settings_init( K_CLIENTS_BASENAME, K_CLIENTS_SETTINGS, $default_settings );
+		$kwik_settings->settings_init(K_CLIENTS_BASENAME, K_CLIENTS_SETTINGS, $default_settings);
 	}
 
 	public function help_screen() {
@@ -63,7 +63,7 @@ class KwikClientsSettings {
 
 		$screen = get_current_screen();
 
-		if ( method_exists( $screen, 'add_help_tab' ) ) {
+		if (method_exists( $screen, 'add_help_tab' )) {
 			// WordPress 3.3+
 			$screen->add_help_tab(
 				array(
@@ -80,26 +80,26 @@ class KwikClientsSettings {
 				)
 			);
 
-			$screen->set_help_sidebar( $sidebar );
+			$screen->set_help_sidebar( $sidebar);
 		} else {
 			// WordPress 3.2
-			add_contextual_help( $screen, $help . $sidebar );
+			add_contextual_help( $screen, $help . $sidebar);
 		}
 	}
 
 	public function settings_page() {
 		$settings = $this->get_options();
 		echo '<div class="wrap">';
-		echo KwikInputs::markup( 'h2', __( "{$this->plugin['Name']} Settings", 'kwik' ) );
-		echo '<form action="options.php" method="post">';
-		settings_fields( K_CLIENTS_SETTINGS );
-		echo KwikSettings::settings_sections( K_CLIENTS_SETTINGS, $settings );
-		echo '</form>';
+			echo KwikInputs::markup( 'h2', __("{$this->plugin['Name']} Settings", 'kwik' ));
+			echo '<form action="options.php" method="post">';
+			settings_fields(K_CLIENTS_SETTINGS);
+			echo KwikSettings::settings_sections(K_CLIENTS_SETTINGS, $settings);
+			echo '</form>';
 		echo '</div>';
 	}
 
 	public static function get_options() {
-		return get_option( K_CLIENTS_SETTINGS, array( &$this, 'default_options' ) );
+		return get_option(K_CLIENTS_SETTINGS, array(&$this, 'default_options' ));
 	}
 
 	public function default_options() {
@@ -123,43 +123,44 @@ class KwikClientsSettings {
 					'dash_icon' => array(
 						'type' => 'select',
 						'title' => __( 'Icon', 'kwik' ),
-						'value' => 'dashicons-awards',
+						'value' => 'dashicons-id-alt',
 						'options' => K_CLIENTS_HELPERS::icons(),
 						'desc' => __( 'Select the Primary icon for this user type', 'kwik' ),
 					),
 				),
 			),
-			// @todo - add editable taxonimies, maybe move to kwik framework
+            // @todo - add editable taxonimies, maybe move to kwik framework
 			// 'client_taxonomies' => array(
-			// 	'section_title' => __('Taxonomies', 'kwik'),
-			// 	'section_desc' => __('Define how content should be categorized', 'kwik'),
+			// 	'section_title' => __( 'Taxonomies', 'kwik' ),
+			// 	'section_desc' => __( 'Define how content should be categorized', 'kwik' ),
 			// 	'settings' => array(
 			// 		'taxonomies' => array(
 			// 			'type' => 'multi',
-			// 			'title' => __('Taxonomies', 'kwik'),
-			//                      'fields' => array(
+			// 			'title' => __( 'Taxonomies', 'kwik' ),
+   //                      'fields' => array(
 
-			//                          )
+   //                          )
 			// 		),
 			// 		'name_plural' => array(
 			// 			'type' => 'text',
-			// 			'title' => __('Plural Name', 'kwik'),
+			// 			'title' => __( 'Plural Name', 'kwik' ),
 			// 			'value' => 'Clients',
-			// 			'desc' => __('Clients, customers, Members, Colleagues, Teams etc', 'kwik'),
+			// 			'desc' => __( 'Clients, customers, Members, Colleagues, Teams etc', 'kwik' ),
 			// 		),
 			// 		'dash_icon' => array(
 			// 			'type' => 'select',
-			// 			'title' => __('Icon', 'kwik'),
+			// 			'title' => __( 'Icon', 'kwik' ),
 			// 			'value' => 'dashicons-awards',
 			// 			'options' => K_CLIENTS_HELPERS::icons(),
-			// 			'desc' => __('Select the Primary icon for this user type', 'kwik'),
+			// 			'desc' => __( 'Select the Primary icon for this user type', 'kwik' ),
 			// 		),
 			// 	),
 			// ),
 		);
 
-		return apply_filters( 'kwik_clients_default_options', $kwik_clients_default_options );
+		return apply_filters( 'kwik_clients_default_options', $kwik_clients_default_options);
 	}
+
 }// END KwikClientsSettings
 
 if ( is_admin() ) {

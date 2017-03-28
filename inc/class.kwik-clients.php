@@ -55,7 +55,7 @@ class KwikClients {
 		$plugin = array(
 			'name' => isset($settings['name']) ? $settings['name'] : 'Client',
 			'name_plural' => isset($settings['name_plural']) ? $settings['name_plural'] : 'Clients',
-			'dash_icon' => isset($settings['dash_icon']) ? $settings['dash_icon'] : 'dashicons-awards',
+			'dash_icon' => isset($settings['dash_icon']) ? $settings['dash_icon'] : 'dashicons-id-alt',
 		);
 
 		self::create_clients_taxonomies();
